@@ -5,11 +5,11 @@ import android.content.Intent;
 import android.graphics.PixelFormat;
 import android.graphics.drawable.AnimationDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
+import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
-import android.support.v4.app.FragmentActivity;
-import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
+import android.provider.Settings;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
@@ -42,12 +42,33 @@ public class TestActivity extends Activity implements View.OnClickListener {
         setContentView(R.layout.activity_test);
         btnAdd = (Button) findViewById(R.id.btnAdd);
         btnSet = (Button) findViewById(R.id.btnSet);
+        permission();
         initFloatWindow();
 
         btnAdd.setOnClickListener(this);
         btnSet.setOnClickListener(this);
 
         topView();// 初始化顶部添加的View
+    }
+
+    public void permission(){
+        if (Build.VERSION.SDK_INT >= 23) {
+            if(!Settings.canDrawOverlays(this)) {
+                Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
+                startActivity(intent);
+                return;
+            } else {
+//                //Android6.0以上
+//                if (mFloatView!=null && mFloatView.isShow()==false) {
+//                    mFloatView.show();
+//                }
+            }
+        } else {
+//            //Android6.0以下，不用动态声明权限
+//            if (mFloatView!=null && mFloatView.isShow()==false) {
+//                mFloatView.show();
+//            }
+        }
     }
 
     public void btnDialogShow(View view) {
@@ -195,7 +216,8 @@ public class TestActivity extends Activity implements View.OnClickListener {
         LP.type = WindowManager.LayoutParams.TYPE_SYSTEM_ALERT;
 
         //系统级别悬浮窗，必须指定flags NOT_FOCUSABLE
-        // FLAG_NOT_TOUCH_MODAL 允许用户手指点击悬浮窗之外的空间，并且能够将事件向下传递
+        // FLAG_NOT_TOUCH_MODAL 允许用户手指点击悬浮窗之外的空间，并且能够将事件向下传
+        // 递
         LP.flags = WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE
                 | WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL;
 
